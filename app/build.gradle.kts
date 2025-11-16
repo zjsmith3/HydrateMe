@@ -1,17 +1,14 @@
-//ignore the warnings from this file.
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.ksp)
+    // Use KSP with Kotlin 2.0
+    id("com.google.devtools.ksp") version "2.0.20-1.0.24"
 }
 
 android {
     namespace = "com.hydrateme.app"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.hydrateme.app"
@@ -32,15 +29,26 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
     }
+
     buildFeatures {
         compose = true
+    }
+
+    // Required so Room + KSP generate correct files
+    kotlin {
+        sourceSets.main {
+            kotlin.srcDir("build/generated/ksp/debug/kotlin")
+            kotlin.srcDir("build/generated/ksp/release/kotlin")
+        }
     }
 }
 
@@ -61,20 +69,16 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    // Material 3 UI
     implementation("com.google.android.material:material:1.13.0")
 
-// Room
+    // ROOM with KSP (versions MUST MATCH)
     implementation("androidx.room:room-runtime:2.8.3")
-    implementation("androidx.room:room-ktx:2.6.1")
+    implementation("androidx.room:room-ktx:2.8.3")
+    ksp("androidx.room:room-compiler:2.8.3")
 
-// Coroutines
+    // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
 
-// WorkManager
+    // WorkManager
     implementation("androidx.work:work-runtime-ktx:2.9.0")
-
-// Charts
-    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
-
 }

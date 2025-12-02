@@ -9,9 +9,12 @@ interface UserSettingsDao {
 
     // Always just one row, ID=1
     @Query("SELECT * FROM user_settings WHERE id = 1")
-    fun getSettings(): Flow<UserSettingsEntity>
-
+    fun getSettings(): Flow<UserSettingsEntity?>
     // Insert or update settings
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveSettings(settings: UserSettingsEntity)
+
+    @Query("SELECT * FROM user_settings WHERE id = 1")
+    suspend fun getSettingsOnce(): UserSettingsEntity?
+
 }

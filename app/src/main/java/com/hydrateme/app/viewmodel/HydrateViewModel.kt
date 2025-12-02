@@ -11,6 +11,12 @@ class HydrateViewModel(
     private val repository: HydrateRepository
 ) : ViewModel() {
 
+    init {
+        viewModelScope.launch {
+            repository.ensureDefaultSettings()
+        }
+    }
+
     // -----------------------------------------
     // TODAY'S HYDRATION DATA
     // -----------------------------------------

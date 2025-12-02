@@ -44,11 +44,19 @@ class HydrateRepository(
     // USER SETTINGS FUNCTIONS
     // --------------------------
 
-    fun getUserSettings(): Flow<UserSettingsEntity> {
+    fun getUserSettings(): Flow<UserSettingsEntity?> {
         return userSettingsDao.getSettings()
     }
 
     suspend fun saveUserSettings(settings: UserSettingsEntity) {
         userSettingsDao.saveSettings(settings)
     }
+
+    suspend fun ensureDefaultSettings() {
+        val current = userSettingsDao.getSettingsOnce()
+        if (current == null) {
+            userSettingsDao.saveSettings(UserSettingsEntity())
+        }
+    }
+
 }

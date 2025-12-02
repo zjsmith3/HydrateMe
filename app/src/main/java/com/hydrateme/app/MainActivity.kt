@@ -15,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.hydrateme.app.data.AppDatabase        // NEW: our Room database
 import com.hydrateme.app.data.repository.WaterRepository          // NEW
 import com.hydrateme.app.data.repository.UserSettingsRepository   // NEW
+import com.hydrateme.app.ui.navigation.AppNavHost
 import com.hydrateme.app.ui.theme.HydrateMeTheme
 import com.hydrateme.app.viewmodel.WaterViewModel                  // NEW
 import com.hydrateme.app.viewmodel.WaterViewModelFactory           // NEW
@@ -55,14 +56,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             HydrateMeTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    // Call our HomeScreen and pass the WaterViewModel + padding.
-                    HomeScreen(
-                        waterViewModel = waterViewModel,
-                        innerPadding = innerPadding
-                    )
-                }
-
+                AppNavHost()
             }
         }
     }

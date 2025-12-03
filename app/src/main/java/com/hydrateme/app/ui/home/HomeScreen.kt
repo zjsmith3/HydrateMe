@@ -63,6 +63,89 @@ fun HomeScreen(navController: NavController) {
         }
     ) { padding ->
 
+        val animatedProgress by animateFloatAsState(
+            targetValue = progress,
+            label = "waterFill"
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
+
+            // ------------------------------------------
+            // Water Background (fills from bottom)
+            // ------------------------------------------
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(animatedProgress)
+                    .align(Alignment.BottomCenter)
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                Color(0xFF69BDF5),  // top color
+                                Color(0xFF1E88E5)   // bottom color
+                            )
+                        )
+                    )
+            )
+
+            // ------------------------------------------
+            // Foreground UI (everything else on top)
+            // ------------------------------------------
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp)
+            ) {
+                // Your existing UI stays the same here ↓↓↓
+
+                Text(
+                    text = "Today's Water Intake",
+                    style = MaterialTheme.typography.headlineSmall
+                )
+
+                Text(
+                    text = "$totalToday / $goal $units",
+                    style = MaterialTheme.typography.headlineMedium
+                )
+
+                LinearProgressIndicator(
+                    progress = progress,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(12.dp),
+                    trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                    color = MaterialTheme.colorScheme.primary
+                )
+
+                Text(
+                    text = "Quick Add",
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
+                ) {
+                    QuickAddButton("+8 $units") { viewModel.addWater(8) }
+                    QuickAddButton("+12 $units") { viewModel.addWater(12) }
+                    QuickAddButton("+16 $units") { viewModel.addWater(16) }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Button(
+                    onClick = { navController.navigate("history") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text("View History")
+
+
         Column(
             modifier = Modifier
                 .padding(padding)

@@ -5,6 +5,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -160,6 +161,25 @@ fun SettingsScreen(navController: NavController) {
             ) {
                 Text("Save Settings")
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+// --------------------
+//  ADD FAKE DATA BUTTON
+// --------------------
+            Button(
+                onClick = {
+                    viewModel.generateFakeData()
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF448AFF) // Blue-ish makes it stand out
+                )
+            ) {
+                Text("Generate Fake Data (30 Days)")
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
 
             Button(
                 onClick = { navController.popBackStack() },

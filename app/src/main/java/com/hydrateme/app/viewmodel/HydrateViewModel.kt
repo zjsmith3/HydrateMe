@@ -1,5 +1,7 @@
 package com.hydrateme.app.viewmodel
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.asLiveData
@@ -16,6 +18,17 @@ class HydrateViewModel(
             repository.ensureDefaultSettings()
         }
     }
+
+    //------------------
+    // history hydration data
+    //------------------
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    val last7DaysIntake = repository.getDailyIntakeLast7Days().asLiveData()
+    @RequiresApi(Build.VERSION_CODES.O)
+    val last30DaysIntake = repository.getDailyIntakeLast30Days().asLiveData()
+
+
 
     // -----------------------------------------
     // TODAY'S HYDRATION DATA
@@ -46,4 +59,28 @@ class HydrateViewModel(
             repository.addWater(amount)
         }
     }
+
+    fun generateFakeHistoryData() {
+        viewModelScope.launch {
+            // Last 30 days
+            val now = System.currentTimeMillis()
+            val dayMillis = 24L * 60 * 60 * 1000
+
+            for (i in 1..30) {
+                val timestamp = now - (i * dayMillis)
+                val fakeAmount = (20..120).random()  // random between 20–120 oz
+
+                repository.addWaterAtTime(fakeAmount, timestamp)
+            }
+        }
+    }
+
+
+    fun generateFakeData() {
+        viewModelScope.launch {
+            repository.generateFakeData()
+        }
+    }
+
+
 }

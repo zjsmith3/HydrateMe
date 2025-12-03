@@ -4,6 +4,8 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -40,70 +42,59 @@ fun HistoryScreen(navController: NavController) {
     val last30Days by viewModel.last30DaysIntake.observeAsState(emptyMap())
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("History") }) }
+        topBar = { TopAppBar(title = { Text("History") }) },
+        bottomBar = {
+            Button(
+                onClick = { navController.popBackStack() },
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth()
+            ) {
+                Text("Back to Home")
+            }
+        }
     ) { padding ->
 
         Column(
             modifier = Modifier
                 .padding(padding)
-                .padding(16.dp)
-                .fillMaxSize(),
+                .padding(horizontal = 16.dp)
+                .verticalScroll(rememberScrollState())
+                .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
 
             // ----------------- LAST 7 DAYS LIST -----------------
             Text("Last 7 Days", style = MaterialTheme.typography.headlineMedium)
 
-// --- Column Titles ---
             Row(
-                modifier = Modifier
+                Modifier
                     .fillMaxWidth()
                     .padding(vertical = 4.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(
-                    text = "Date",
-                    style = MaterialTheme.typography.labelLarge,
-                    modifier = Modifier.weight(1f)
-                )
-                Text(
-                    text = "Amount",
-                    style = MaterialTheme.typography.labelLarge,
-                    modifier = Modifier.weight(1f)
-                )
-                Text(
-                    text = "Goal Met",
-                    style = MaterialTheme.typography.labelLarge,
-                    modifier = Modifier.weight(1f)
-                )
+                Text("Date", modifier = Modifier.weight(1f), style = MaterialTheme.typography.labelLarge)
+                Text("Amount", modifier = Modifier.weight(1f), style = MaterialTheme.typography.labelLarge)
+                Text("Goal Met", modifier = Modifier.weight(1f), style = MaterialTheme.typography.labelLarge)
             }
 
-// --- 7-Day Rows ---
             last7Days.forEach { (day, amount) ->
                 val goal = userSettings?.dailyGoal ?: 64
                 val metGoal = amount >= goal
 
                 Row(
-                    modifier = Modifier
+                    Modifier
                         .fillMaxWidth()
                         .padding(vertical = 2.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(
-                        text = day,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Text(
-                        text = "$amount ${userSettings?.units ?: "oz"}",
-                        modifier = Modifier.weight(1f)
-                    )
-                    Text(
-                        text = if (metGoal) "✓" else "✗",
-                        modifier = Modifier.weight(1f)
-                    )
+                    Text(day, modifier = Modifier.weight(1f))
+                    Text("$amount ${userSettings?.units ?: "oz"}", modifier = Modifier.weight(1f))
+                    Text(if (metGoal) "✓" else "✗", modifier = Modifier.weight(1f))
                 }
             }
 
+            Divider()
 
             // ----------------- LAST 30 DAYS GRAPH -----------------
             Text("Last 30 Days Intake", style = MaterialTheme.typography.headlineMedium)
@@ -112,15 +103,16 @@ fun HistoryScreen(navController: NavController) {
             val values = sortedEntries.values.toList()
 
             if (values.isNotEmpty()) {
+
                 val maxAmount = (values.maxOrNull() ?: 1).toFloat()
 
                 Row(
-                    modifier = Modifier
+                    Modifier
                         .fillMaxWidth()
                         .height(240.dp)
                 ) {
 
-                    // ---- GRAPH AREA ----
+                    // GRAPH AREA
                     Canvas(
                         modifier = Modifier
                             .weight(1f)
@@ -132,9 +124,9 @@ fun HistoryScreen(navController: NavController) {
                             if (count > 1) size.width / (count - 1).toFloat() else 0f
 
                         values.forEachIndexed { index, value ->
-
                             val x = index * widthStep
-                            val y = size.height - (value / maxAmount) * size.height
+                            val y =
+                                size.height - (value / maxAmount) * size.height
 
                             if (index == 0) path.moveTo(x, y)
                             else path.lineTo(x, y)
@@ -153,49 +145,37 @@ fun HistoryScreen(navController: NavController) {
                         )
                     }
 
-                    // ---- Y-AXIS LABELS ----
+                    // Y-AXIS LABELS
                     Column(
-                        modifier = Modifier
+                        Modifier
                             .fillMaxHeight()
                             .padding(start = 6.dp),
                         verticalArrangement = Arrangement.SpaceBetween,
                         horizontalAlignment = Alignment.End
                     ) {
-                        // Top: maxAmount
                         Text("${maxAmount.toInt()}", style = MaterialTheme.typography.bodySmall)
-
-                        // 75%
                         Text("${(maxAmount * 0.75f).toInt()}", style = MaterialTheme.typography.bodySmall)
-
-                        // 50%
                         Text("${(maxAmount * 0.5f).toInt()}", style = MaterialTheme.typography.bodySmall)
-
-                        // 25%
                         Text("${(maxAmount * 0.25f).toInt()}", style = MaterialTheme.typography.bodySmall)
-
-                        // Bottom: 0
                         Text("0", style = MaterialTheme.typography.bodySmall)
                     }
                 }
 
-                // ---- X-axis labels (days) ----
+                // X-AXIS LABELS
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    sortedEntries.keys.toList().forEachIndexed { index, day ->
+                    sortedEntries.keys.forEachIndexed { index, day ->
                         if (index % 5 == 0 || index == sortedEntries.size - 1) {
-                            Text(
-                                text = day.takeLast(2),
-                                style = MaterialTheme.typography.bodySmall
-                            )
+                            Text(day.takeLast(2), style = MaterialTheme.typography.bodySmall)
                         } else {
                             Spacer(Modifier.width(0.dp))
                         }
                     }
                 }
             } else {
-                Text("No data yet for the last 30 days.")
+                Text("No data for the last 30 days.")
             }
         }
     }

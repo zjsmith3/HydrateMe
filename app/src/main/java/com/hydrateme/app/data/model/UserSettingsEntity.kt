@@ -13,7 +13,7 @@ data class UserSettingsEntity(
 
     // --- GOAL & UNITS ---
     // daily target in your chosen unit (e.g., ml or oz)
-    val dailyGoal: Int = 2000,
+    val dailyGoal: Int = 64,
     val units: String = "oz",   // or "oz"
 
     // --- REMINDERS ---

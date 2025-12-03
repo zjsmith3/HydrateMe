@@ -191,6 +191,20 @@ fun SettingsScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(10.dp))
 
+            // 🔹 NEW: Test notification button
+            Button(
+                onClick = {
+                    HydrationReminderScheduler.scheduleTestReminder(context)
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF4CAF50), // green-ish for "test"
+                    contentColor = Color.White
+                )
+            ) {
+                Text("Test Notification (5s)")
+            }
+
             Button(
                 onClick = { navController.popBackStack() },
                 modifier = Modifier.fillMaxWidth()

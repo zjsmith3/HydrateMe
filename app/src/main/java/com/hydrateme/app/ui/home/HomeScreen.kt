@@ -130,6 +130,25 @@ fun HomeScreen(navController: NavController) {
             ) {
                 Text("Settings")
             }
+            // Push logo to the bottom
+            Spacer(modifier = Modifier.weight(1f))
+
+            // HydrateMe logo at the bottom center
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 24.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.hydrateme_logo),
+                    contentDescription = "HydrateMe Logo",
+                    modifier = Modifier
+                        .fillMaxWidth(0.55f)   // ~55% of screen width so it fits nicely
+                        .aspectRatio(1f)       // keep proportions, no stretching
+                )
+            }
+
         }
     }
 }

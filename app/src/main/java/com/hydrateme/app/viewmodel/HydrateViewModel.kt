@@ -62,6 +62,14 @@ class HydrateViewModel(
         }
     }
 
+
+    fun resetToday() {
+        viewModelScope.launch {
+            repository.resetTodayLogs()
+        }
+    }
+
+
     fun generateFakeHistoryData() {
         viewModelScope.launch {
             // Last 30 days

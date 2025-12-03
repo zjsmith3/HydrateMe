@@ -15,6 +15,10 @@ import com.hydrateme.app.data.database.HydrateDatabase
 import com.hydrateme.app.data.repository.HydrateRepository
 import com.hydrateme.app.viewmodel.HydrateViewModel
 import com.hydrateme.app.viewmodel.HydrateViewModelFactory
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import com.hydrateme.app.R
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

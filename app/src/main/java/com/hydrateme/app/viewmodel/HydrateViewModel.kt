@@ -14,10 +14,12 @@ class HydrateViewModel(
 ) : ViewModel() {
 
     init {
+        // Ensure the settings row exists BEFORE UI reads it
         viewModelScope.launch {
             repository.ensureDefaultSettings()
         }
     }
+
 
     //------------------
     // history hydration data

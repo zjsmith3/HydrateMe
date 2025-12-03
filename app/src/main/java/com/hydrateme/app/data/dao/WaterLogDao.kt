@@ -24,6 +24,13 @@ interface WaterLogDao {
     """)
     fun getTodayLogs(): Flow<List<WaterLogEntity>>
 
+    // ✅ NEW: delete ONLY today's logs
+    @Query("""
+        DELETE FROM water_logs
+        WHERE date(timestamp/1000, 'unixepoch') = date('now')
+    """)
+    suspend fun deleteTodayLogs()
+
     // Get logs from last 7 days
     @Query("""
         SELECT * FROM water_logs

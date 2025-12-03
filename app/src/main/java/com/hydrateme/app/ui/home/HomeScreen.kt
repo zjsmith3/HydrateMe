@@ -55,6 +55,18 @@ fun HomeScreen(navController: NavController) {
 
     val progress = if (goal == 0) 0f else (totalToday.toFloat() / goal.toFloat()).coerceIn(0f, 1f)
 
+    var showGoalDialog by remember { mutableStateOf(false) }
+    var hasShownGoalDialog by remember { mutableStateOf(false) }
+
+// When user first crosses their goal, show the dialog once
+    LaunchedEffect(totalToday, goal) {
+        if (totalToday >= goal && !hasShownGoalDialog) {
+            showGoalDialog = true
+            hasShownGoalDialog = true
+        }
+    }
+
+
     Scaffold(
         topBar = {
             TopAppBar(

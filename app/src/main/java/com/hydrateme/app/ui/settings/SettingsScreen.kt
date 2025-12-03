@@ -156,6 +156,16 @@ fun SettingsScreen(navController: NavController) {
                     )
 
                     viewModel.saveUserSettings(updated)
+
+                    // Start or stop reminders based on new settings
+                    if (updated.remindersEnabled) {
+                        HydrationReminderScheduler.scheduleHydrationReminders(
+                            context = context,
+                            intervalHours = updated.reminderIntervalHours.toLong()
+                        )
+                    } else {
+                        HydrationReminderScheduler.cancelHydrationReminders(context)
+                    }
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {

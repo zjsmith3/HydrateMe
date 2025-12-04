@@ -135,14 +135,33 @@ fun HomeScreen(navController: NavController) {
                     style = MaterialTheme.typography.headlineMedium
                 )
 
-                LinearProgressIndicator(
-                    progress = progress,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(12.dp),
-                    trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                    color = MaterialTheme.colorScheme.primary
-                )
+                            if (progress >= 1f) {
+                                AssistChip(
+                                    onClick = { /* decorative only */ },
+                                    enabled = false,
+                                    label = { Text("Goal reached 🏆") },
+                                    colors = AssistChipDefaults.assistChipColors(
+                                        disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                        disabledLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                    )
+                                )
+                            }
+                        }
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(16.dp)
+                                .clip(RoundedCornerShape(999.dp)) // pill shape
+                                .background(MaterialTheme.colorScheme.surfaceVariant)
+                        ) {
+                            LinearProgressIndicator(
+                                progress = progress,
+                                modifier = Modifier.fillMaxSize(),
+                                color = MaterialTheme.colorScheme.primary,
+                                trackColor = Color.Transparent
+                            )
+                        }
 
                 Text(
                     text = "Quick Add",

@@ -214,13 +214,16 @@ fun HomeScreen(navController: NavController) {
             // ------------------------------------------
             Spacer(modifier = Modifier.height(16.dp))
 
-            Button(
-                onClick = { navController.navigate("history") },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Text("View History")
-            }
+                // Navigation buttons
+                Button(
+                    onClick = { navController.navigate("history") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Icon(Icons.Filled.History, contentDescription = "History")
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("View History")
+                }
 
             Button(
                 onClick = { navController.navigate("settings") },

@@ -125,10 +125,25 @@ fun HomeScreen(navController: NavController) {
             ) {
                 // Your existing UI stays the same here ↓↓↓
 
-                Text(
-                    text = "Today's Water Intake",
-                    style = MaterialTheme.typography.headlineSmall
-                )
+                // ---- Today's intake card ----
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.75f)
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Text(
+                            text = "Today's Water Intake",
+                            style = MaterialTheme.typography.headlineSmall
+                        )
 
                 Text(
                     text = "$totalToday / $goal $units",

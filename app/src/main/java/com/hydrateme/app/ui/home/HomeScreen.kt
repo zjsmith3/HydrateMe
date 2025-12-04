@@ -516,7 +516,9 @@ fun AchievementBadge(
         else BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f))
 
     Card(
-        modifier = modifier.scale(scale),
+        modifier = modifier
+            .scale(scale)
+            .heightIn(min = 64.dp),   // 👈 force a decent badge size
         colors = CardDefaults.cardColors(containerColor = bgColor),
         border = border,
         shape = RoundedCornerShape(16.dp)

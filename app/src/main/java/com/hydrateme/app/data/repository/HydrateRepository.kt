@@ -27,6 +27,12 @@ class HydrateRepository(
         waterLogDao.insertLog(log)
     }
 
+    //ResetToday's Logs
+    suspend fun resetTodayLogs() {
+        waterLogDao.deleteTodayLogs()
+    }
+
+
     // Stream of today's logs
     fun getTodayLogs(): Flow<List<WaterLogEntity>> {
         return waterLogDao.getTodayLogs()

@@ -2,8 +2,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    // Use KSP with Kotlin 2.0
-    id("com.google.devtools.ksp") version "2.0.20-1.0.24"
+
+    // KSP version must match Kotlin 2.0.21
+    id("com.google.devtools.ksp") version "2.0.21-1.0.27"
 }
 
 
@@ -73,6 +74,8 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     implementation("com.google.android.material:material:1.13.0")
+
+    implementation("androidx.compose.material:material-icons-extended")
 
     // ROOM with KSP (versions MUST MATCH)
     implementation("androidx.room:room-runtime:2.8.3")

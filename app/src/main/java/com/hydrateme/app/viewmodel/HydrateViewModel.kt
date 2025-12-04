@@ -34,11 +34,14 @@ class HydrateViewModel(
 
     // -----------------------------------------
     // TODAY'S HYDRATION DATA
+    // last7Days HYDRATION DATA
+    // allLogs HYDRATION DATA
     // -----------------------------------------
 
     val todayLogs = repository.getTodayLogs().asLiveData()
     val todayTotal = todayLogs
     val last7DaysLogs = repository.getLast7DaysLogs().asLiveData()
+    val allLogs = repository.getAllLogs().asLiveData()
 
     // -----------------------------------------
     // USER SETTINGS

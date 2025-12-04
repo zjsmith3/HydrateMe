@@ -425,6 +425,11 @@ fun AchievementBadges(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
+            text = "Every sip counts. Stay hydrated 💙",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Text(
             text = "Today's Achievements",
             style = MaterialTheme.typography.titleMedium
         )

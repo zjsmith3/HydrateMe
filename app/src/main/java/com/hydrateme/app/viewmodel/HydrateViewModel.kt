@@ -13,13 +13,22 @@ class HydrateViewModel(
     private val repository: HydrateRepository
 ) : ViewModel() {
 
+
     init {
-        // Ensure the settings row exists BEFORE UI reads it
         viewModelScope.launch {
-            repository.ensureDefaultSettings()
+            val existing = repository.getUserSettingsOnce()
+
+            if (existing == null) {
+                // Create empty placeholder settings
+                repository.saveUserSettings(
+                    UserSettingsEntity(
+                        dailyGoal = -1,   // use -1 so you can detect first-time user
+                        units = ""        // also empty
+                    )
+                )
+            }
         }
     }
-
 
     //------------------
     // history hydration data

@@ -214,6 +214,21 @@ fun HomeScreen(navController: NavController) {
     var showCustomDialog by remember { mutableStateOf(false) }
     var customAmountText by remember { mutableStateOf("") }
     var customAmountError by remember { mutableStateOf(false) }
+
+    // ---------- FIRST-TIME USER SETUP ----------
+    var showFirstTimeDialog by remember { mutableStateOf(false) }
+    var firstTimeGoalText by remember { mutableStateOf("") }
+    var firstTimeUnits by remember { mutableStateOf(settings.units) }
+    var firstTimeError by remember { mutableStateOf(false) }
+
+    LaunchedEffect(settings) {
+        if (settings != null && (settings.dailyGoal <= 0 || settings.units.isBlank())) {
+            showFirstTimeDialog = true
+            firstTimeGoalText = ""
+            firstTimeUnits = "oz"
+        }
+    }
+
     LaunchedEffect(totalToday, goal) {
         if (totalToday >= goal && !hasShownGoalDialog) {
             showGoalDialog = true
@@ -261,6 +276,93 @@ fun HomeScreen(navController: NavController) {
                     }
                 )
             }
+
+            // ---------------- FIRST-TIME USER SETUP POPUP ----------------
+            if (showFirstTimeDialog) {
+                AlertDialog(
+                    onDismissRequest = { /* prevent dismissal */ },
+                    title = { Text("Welcome to HydrateMe! 💧") },
+                    text = {
+                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+
+                            Text(
+                                "Before we start, let’s set your daily hydration goal.",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+
+                            // Goal input
+                            OutlinedTextField(
+                                value = firstTimeGoalText,
+                                onValueChange = {
+                                    firstTimeGoalText = it
+                                    firstTimeError = false
+                                },
+                                label = { Text("Daily Goal (${firstTimeUnits})") },
+                                singleLine = true,
+                                isError = firstTimeError
+                            )
+
+                            // Units selector
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceEvenly
+                            ) {
+                                AssistChip(
+                                    label = { Text("oz") },
+                                    onClick = { firstTimeUnits = "oz" },
+                                    colors = AssistChipDefaults.assistChipColors(
+                                        containerColor =
+                                            if (firstTimeUnits == "oz")
+                                                MaterialTheme.colorScheme.primaryContainer
+                                            else MaterialTheme.colorScheme.surfaceVariant
+                                    )
+                                )
+
+                                AssistChip(
+                                    label = { Text("ml") },
+                                    onClick = { firstTimeUnits = "ml" },
+                                    colors = AssistChipDefaults.assistChipColors(
+                                        containerColor =
+                                            if (firstTimeUnits == "ml")
+                                                MaterialTheme.colorScheme.primaryContainer
+                                            else MaterialTheme.colorScheme.surfaceVariant
+                                    )
+                                )
+                            }
+
+                            if (firstTimeError) {
+                                Text(
+                                    text = "Please enter a positive number.",
+                                    color = MaterialTheme.colorScheme.error,
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+                            }
+                        }
+                    },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                val goalNum = firstTimeGoalText.toIntOrNull()
+                                if (goalNum == null || goalNum <= 0) {
+                                    firstTimeError = true
+                                } else {
+                                    // Save new user settings
+                                    viewModel.saveUserSettings(
+                                        settings!!.copy(
+                                            dailyGoal = goalNum,
+                                            units = firstTimeUnits
+                                        )
+                                    )
+                                    showFirstTimeDialog = false
+                                }
+                            }
+                        ) {
+                            Text("Save")
+                        }
+                    }
+                )
+            }
+
 
             if (showCustomDialog) {
                 AlertDialog(

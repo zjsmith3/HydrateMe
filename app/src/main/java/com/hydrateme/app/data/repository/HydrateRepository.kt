@@ -61,12 +61,16 @@ class HydrateRepository(
         userSettingsDao.saveSettings(settings)
     }
 
+    //added a prompt on new user open to make settings default.
+    /*
     suspend fun ensureDefaultSettings() {
         val current = userSettingsDao.getSettingsOnce()
         if (current == null) {
             userSettingsDao.saveSettings(UserSettingsEntity())
         }
     }
+
+     */
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun getDailyIntakeLast7Days(): Flow<Map<String, Int>> {
@@ -127,6 +131,10 @@ class HydrateRepository(
 
             waterLogDao.insertLog(log)
         }
+    }
+
+    suspend fun getUserSettingsOnce(): UserSettingsEntity? {
+        return userSettingsDao.getSettingsOnce()
     }
 
 }

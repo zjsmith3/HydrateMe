@@ -21,6 +21,12 @@ import com.hydrateme.app.R
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.foundation.background
+import androidx.compose.ui.draw.clip
+
 
 
 

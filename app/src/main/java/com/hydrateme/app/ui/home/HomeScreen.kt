@@ -225,15 +225,18 @@ fun HomeScreen(navController: NavController) {
                     Text("View History")
                 }
 
-            Button(
-                onClick = { navController.navigate("settings") },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Text("Settings")
-            }
-            // Push logo to the bottom
-            Spacer(modifier = Modifier.weight(1f))
+                Button(
+                    onClick = { navController.navigate("settings") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Icon(Icons.Filled.Settings, contentDescription = "Settings")
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Settings")
+                }
+
+                // Push achievements toward the bottom
+                Spacer(modifier = Modifier.weight(1f))
 
             // HydrateMe logo at the bottom center
             Box(

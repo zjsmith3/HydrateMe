@@ -13,13 +13,22 @@ class HydrateViewModel(
     private val repository: HydrateRepository
 ) : ViewModel() {
 
+
     init {
-        // Ensure the settings row exists BEFORE UI reads it
         viewModelScope.launch {
-            repository.ensureDefaultSettings()
+            val existing = repository.getUserSettingsOnce()
+
+            if (existing == null) {
+                // Create empty placeholder settings
+                repository.saveUserSettings(
+                    UserSettingsEntity(
+                        dailyGoal = -1,   // use -1 so you can detect first-time user
+                        units = ""        // also empty
+                    )
+                )
+            }
         }
     }
-
 
     //------------------
     // history hydration data
@@ -34,11 +43,14 @@ class HydrateViewModel(
 
     // -----------------------------------------
     // TODAY'S HYDRATION DATA
+    // last7Days HYDRATION DATA
+    // allLogs HYDRATION DATA
     // -----------------------------------------
 
     val todayLogs = repository.getTodayLogs().asLiveData()
     val todayTotal = todayLogs
     val last7DaysLogs = repository.getLast7DaysLogs().asLiveData()
+    val allLogs = repository.getAllLogs().asLiveData()
 
     // -----------------------------------------
     // USER SETTINGS
@@ -61,6 +73,14 @@ class HydrateViewModel(
             repository.addWater(amount)
         }
     }
+
+
+    fun resetToday() {
+        viewModelScope.launch {
+            repository.resetTodayLogs()
+        }
+    }
+
 
     fun generateFakeHistoryData() {
         viewModelScope.launch {

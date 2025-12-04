@@ -14,7 +14,8 @@ interface UserSettingsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveSettings(settings: UserSettingsEntity)
 
-    @Query("SELECT * FROM user_settings WHERE id = 1")
+
+    @Query("SELECT * FROM user_settings LIMIT 1")
     suspend fun getSettingsOnce(): UserSettingsEntity?
 
 }

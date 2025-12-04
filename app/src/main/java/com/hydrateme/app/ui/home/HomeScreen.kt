@@ -324,3 +324,218 @@ fun QuickAddButton(
         Text(text)
     }
 }
+
+
+@Composable
+fun AnimatedWaterBackground(
+    progress: Float,
+    modifier: Modifier = Modifier
+) {
+    val animatedProgress by animateFloatAsState(
+        targetValue = progress.coerceIn(0f, 1f),
+        label = "waterFill"
+    )
+
+    val infiniteTransition = rememberInfiniteTransition(label = "wave")
+    val wavePhase by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = (2f * Math.PI).toFloat(),
+        animationSpec = infiniteRepeatable(
+            animation = tween<Float>(
+                durationMillis = 4000,
+                easing = LinearEasing
+            ),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "wavePhase"
+    )
+
+    Canvas(modifier = modifier) {
+        val width = size.width
+        val height = size.height
+
+        val waterTop = height * (1f - animatedProgress)
+
+        // Water fill
+        drawRect(
+            brush = Brush.verticalGradient(
+                colors = listOf(
+                    Color(0xFF69BDF5),
+                    Color(0xFF1E88E5)
+                ),
+                startY = waterTop,
+                endY = height
+            ),
+            topLeft = Offset(0f, waterTop),
+            size = Size(width, height - waterTop)
+        )
+
+        // Wave
+        val waveHeight = 18f
+        val path = Path().apply {
+            moveTo(0f, waterTop)
+
+            val step = 8f
+            var x = 0f
+            while (x <= width) {
+                val y = waterTop + kotlin.math.sin(
+                    (x / width) * 2f * Math.PI.toFloat() + wavePhase
+                ) * waveHeight
+                lineTo(x, y)
+                x += step
+            }
+
+            lineTo(width, height)
+            lineTo(0f, height)
+            close()
+        }
+
+        drawPath(
+            path = path,
+            brush = Brush.verticalGradient(
+                colors = listOf(
+                    Color(0x8069BDF5),
+                    Color(0x801E88E5)
+                ),
+                startY = waterTop - waveHeight,
+                endY = height
+            )
+        )
+    }
+}
+
+@Composable
+fun AchievementBadges(
+    progress: Float,
+    totalToday: Int,
+    goal: Int,
+    modifier: Modifier = Modifier
+) {
+    val firstSipUnlocked = totalToday > 0
+    val quarterUnlocked = progress >= 0.25f
+    val halfwayUnlocked = progress >= 0.5f
+    val almostUnlocked = progress >= 0.75f
+    val goalUnlocked = progress >= 1f
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Text(
+            text = "Today's Achievements",
+            style = MaterialTheme.typography.titleMedium
+        )
+
+        // Row 1
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            AchievementBadge(
+                title = "First Sip 💧",
+                description = "Logged water today",
+                unlocked = firstSipUnlocked,
+                modifier = Modifier.weight(1f)
+            )
+            AchievementBadge(
+                title = "25% Charged ⚡",
+                description = "Quarter to your goal",
+                unlocked = quarterUnlocked,
+                modifier = Modifier.weight(1f)
+            )
+        }
+
+        // Row 2
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            AchievementBadge(
+                title = "Halfway Hero 🌟",
+                description = "50% of your goal",
+                unlocked = halfwayUnlocked,
+                modifier = Modifier.weight(1f)
+            )
+            AchievementBadge(
+                title = "Almost There 💫",
+                description = "75% of your goal",
+                unlocked = almostUnlocked,
+                modifier = Modifier.weight(1f)
+            )
+            AchievementBadge(
+                title = "Goal Crusher 🏆",
+                description = "Goal reached",
+                unlocked = goalUnlocked,
+                modifier = Modifier.weight(1f)
+            )
+        }
+        Text(
+            text = "Every sip counts. Stay hydrated 💙",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}
+
+@Composable
+fun AchievementBadge(
+    title: String,
+    description: String,
+    unlocked: Boolean,
+    modifier: Modifier = Modifier
+) {
+    // Animated scale so it “pops” when it becomes unlocked
+    val targetScale = if (unlocked) 1.05f else 1f
+    val scale by animateFloatAsState(
+        targetValue = targetScale,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "badgeScale"
+    )
+
+    // Animated background color between locked & unlocked
+    val bgColor by animateColorAsState(
+        targetValue = if (unlocked)
+            MaterialTheme.colorScheme.primaryContainer
+        else
+            MaterialTheme.colorScheme.surfaceVariant,
+        label = "badgeBg"
+    )
+
+    val contentColor =
+        if (unlocked) MaterialTheme.colorScheme.onPrimaryContainer
+        else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+
+    val border: BorderStroke? =
+        if (unlocked) null
+        else BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f))
+
+    Card(
+        modifier = modifier.scale(scale),
+        colors = CardDefaults.cardColors(containerColor = bgColor),
+        border = border,
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 12.dp, vertical = 10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.labelLarge,
+                color = contentColor
+            )
+            Text(
+                text = if (unlocked) description else "Locked",
+                style = MaterialTheme.typography.labelSmall,
+                color = contentColor
+            )
+        }
+    }
+}

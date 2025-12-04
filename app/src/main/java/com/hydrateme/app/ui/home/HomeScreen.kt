@@ -229,12 +229,6 @@ fun HomeScreen(navController: NavController) {
         }
     }
 
-    LaunchedEffect(totalToday, goal) {
-        if (totalToday >= goal && !hasShownGoalDialog) {
-            showGoalDialog = true
-            hasShownGoalDialog = true
-        }
-    }
 
     Scaffold(
         topBar = {
@@ -259,23 +253,7 @@ fun HomeScreen(navController: NavController) {
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            if (showGoalDialog) {
-                AlertDialog(
-                    onDismissRequest = { showGoalDialog = false },
-                    title = { Text("Hydration High-Five! 💧") },
-                    text = {
-                        Text(
-                            "You just hit your daily goal of $goal $units!\n\n" +
-                                    "Your cells are doing a happy little splash dance. 🫧"
-                        )
-                    },
-                    confirmButton = {
-                        TextButton(onClick = { showGoalDialog = false }) {
-                            Text("Keep Sipping ✨")
-                        }
-                    }
-                )
-            }
+
 
             // ---------------- FIRST-TIME USER SETUP POPUP ----------------
             if (showFirstTimeDialog) {

@@ -34,11 +34,14 @@ class HydrateViewModel(
 
     // -----------------------------------------
     // TODAY'S HYDRATION DATA
+    // last7Days HYDRATION DATA
+    // allLogs HYDRATION DATA
     // -----------------------------------------
 
     val todayLogs = repository.getTodayLogs().asLiveData()
     val todayTotal = todayLogs
     val last7DaysLogs = repository.getLast7DaysLogs().asLiveData()
+    val allLogs = repository.getAllLogs().asLiveData()
 
     // -----------------------------------------
     // USER SETTINGS
@@ -61,6 +64,14 @@ class HydrateViewModel(
             repository.addWater(amount)
         }
     }
+
+
+    fun resetToday() {
+        viewModelScope.launch {
+            repository.resetTodayLogs()
+        }
+    }
+
 
     fun generateFakeHistoryData() {
         viewModelScope.launch {

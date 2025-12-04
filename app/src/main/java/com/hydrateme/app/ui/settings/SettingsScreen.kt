@@ -30,6 +30,9 @@ fun SettingsScreen(navController: NavController) {
     // Observe data from DB (may be null!)
     val settings = viewModel.userSettings.observeAsState().value
 
+    // Dialog state for reset-today confirmation
+    var showResetDialog by remember { mutableStateOf(false) }
+
     // Wait for DB to load before building UI
     if (settings == null) {
         Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) {
@@ -47,6 +50,31 @@ fun SettingsScreen(navController: NavController) {
     Scaffold(
         topBar = { TopAppBar(title = { Text("Settings") }) }
     ) { padding ->
+
+        // Confirmation dialog for resetting today's log
+        if (showResetDialog) {
+            AlertDialog(
+                onDismissRequest = { showResetDialog = false },
+                title = { Text("Reset Today’s Water Log?") },
+                text = {
+                    Text("This will delete all water entries you logged today. Your past history will stay safe.")
+                },
+                confirmButton = {
+                    TextButton(onClick = {
+                        viewModel.resetToday()
+                        showResetDialog = false
+                    }) {
+                        Text("Reset")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showResetDialog = false }) {
+                        Text("Cancel")
+                    }
+                }
+            )
+        }
+
         Column(
             modifier = Modifier
                 .padding(padding)
@@ -156,17 +184,19 @@ fun SettingsScreen(navController: NavController) {
                     )
 
                     viewModel.saveUserSettings(updated)
+                    // TODO: hook up notifications here later when your scheduler is ready
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Save Settings")
             }
 
+
             Spacer(modifier = Modifier.height(16.dp))
 
-// --------------------
-//  ADD FAKE DATA BUTTON
-// --------------------
+            // --------------------
+            //  ADD FAKE DATA BUTTON
+            // --------------------
             Button(
                 onClick = {
                     viewModel.generateFakeData()
@@ -177,6 +207,19 @@ fun SettingsScreen(navController: NavController) {
                 )
             ) {
                 Text("Generate Fake Data (30 Days)")
+            }
+
+            // --------------------
+            //  RESET TODAY BUTTON
+            // --------------------
+            Button(
+                onClick = { showResetDialog = true },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFE53935) // red-ish, "danger" action
+                )
+            ) {
+                Text("Reset Today's Water Log")
             }
 
             Spacer(modifier = Modifier.height(10.dp))

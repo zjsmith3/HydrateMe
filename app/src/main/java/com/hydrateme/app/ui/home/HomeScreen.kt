@@ -47,6 +47,7 @@ fun HomeScreen(navController: NavController) {
 
     // Observe settings
     val settings = viewModel.userSettings.observeAsState().value
+    val last7DaysLogs by viewModel.last7DaysLogs.observeAsState(emptyList())
 
     // If settings aren't loaded yet, show loading
     if (settings == null) {

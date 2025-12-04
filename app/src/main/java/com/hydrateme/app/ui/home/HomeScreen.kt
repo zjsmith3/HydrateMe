@@ -472,6 +472,7 @@ fun AchievementBadges(
                 modifier = Modifier.weight(1f)
             )
         }
+
         Text(
             text = "Every sip counts. Stay hydrated 💙",
             style = MaterialTheme.typography.bodySmall,

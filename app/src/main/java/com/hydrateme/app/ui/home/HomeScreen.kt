@@ -211,7 +211,9 @@ fun HomeScreen(navController: NavController) {
 
     var showGoalDialog by remember { mutableStateOf(false) }
     var hasShownGoalDialog by remember { mutableStateOf(false) }
-
+    var showCustomDialog by remember { mutableStateOf(false) }
+    var customAmountText by remember { mutableStateOf("") }
+    var customAmountError by remember { mutableStateOf(false) }
     LaunchedEffect(totalToday, goal) {
         if (totalToday >= goal && !hasShownGoalDialog) {
             showGoalDialog = true
@@ -255,6 +257,57 @@ fun HomeScreen(navController: NavController) {
                     confirmButton = {
                         TextButton(onClick = { showGoalDialog = false }) {
                             Text("Keep Sipping ✨")
+                        }
+                    }
+                )
+            }
+
+            if (showCustomDialog) {
+                AlertDialog(
+                    onDismissRequest = { showCustomDialog = false },
+                    title = { Text("Log Custom Amount") },
+                    text = {
+                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+
+                            OutlinedTextField(
+                                value = customAmountText,
+                                onValueChange = {
+                                    customAmountText = it
+                                    customAmountError = false
+                                },
+                                label = { Text("Enter amount ($units)") },
+                                isError = customAmountError,
+                                singleLine = true
+                            )
+
+                            if (customAmountError) {
+                                Text(
+                                    text = "Please enter a positive number.",
+                                    color = MaterialTheme.colorScheme.error,
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+                            }
+                        }
+                    },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                val amount = customAmountText.toIntOrNull()
+
+                                if (amount == null || amount <= 0) {
+                                    customAmountError = true
+                                } else {
+                                    viewModel.addWater(amount)
+                                    showCustomDialog = false
+                                }
+                            }
+                        ) {
+                            Text("Add")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showCustomDialog = false }) {
+                            Text("Cancel")
                         }
                     }
                 )
@@ -341,7 +394,7 @@ fun HomeScreen(navController: NavController) {
                     }
                 }
 
-                // --- Quick Add card ---
+                /// --- Quick Add card ---
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
@@ -354,8 +407,9 @@ fun HomeScreen(navController: NavController) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
+
                         Text(
                             text = "Quick Add",
                             style = MaterialTheme.typography.titleMedium
@@ -367,6 +421,7 @@ fun HomeScreen(navController: NavController) {
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
 
+                        // FIRST ROW (8, 12, 16)
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(
@@ -377,6 +432,18 @@ fun HomeScreen(navController: NavController) {
                             QuickAddButton("+8 $units") { viewModel.addWater(8) }
                             QuickAddButton("+12 $units") { viewModel.addWater(12) }
                             QuickAddButton("+16 $units") { viewModel.addWater(16) }
+                        }
+
+                        // CUSTOM BUTTON BELOW
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            QuickAddButton("Custom") {
+                                customAmountText = ""
+                                customAmountError = false
+                                showCustomDialog = true
+                            }
                         }
                     }
                 }
